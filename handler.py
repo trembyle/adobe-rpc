@@ -7,8 +7,7 @@ def get_rpc_update():
             from api.windows import get_title, get_process_info, get_status
 
             app_info = get_process_info()
-            app_title = get_title(app_info['pid'])
-            app_state = get_status(app_info, app_title)
+            app_state = get_status(app_info)
 
             rpc_update = {'state': app_state,
                           'small_image': app_info['smallImageKey'],

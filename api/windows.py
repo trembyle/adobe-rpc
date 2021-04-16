@@ -7,13 +7,14 @@ import ntpath
 
 def get_title(pid):
     def callback(hwnd, hwnds):
-        if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):
+        if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd) and win32gui.IsWindow(hwnd):
             _, found_pid = win32process.GetWindowThreadProcessId(hwnd)
             if found_pid == pid:
                 hwnds.append(hwnd)
-    hwnds = []
+    hwnds, window_title = [], ""
     win32gui.EnumWindows(callback, hwnds)
-    window_title = win32gui.GetWindowText(hwnds[-1])
+    if len(hwnds):
+        window_title = win32gui.GetWindowText(hwnds[-1])
     return window_title
 
 
@@ -26,16 +27,19 @@ def get_process_info():
         process_name = element['processName']
         for process in psutil.process_iter():
             process_info = process.as_dict(attrs=['pid', 'name'])
-            if process_info['name'].lower() in process_name:
-                element['pid'] = process_info['pid']
-                return element
+            if process_info['name'] and process_info['name'].lower() in process_name:
+                process_title = get_title(process_info['pid'])
+                if process_title:
+                    element['pid'] = process_info['pid']
+                    element['title'] = process_title
+                    return element
 
 
-def get_status(app_info, title):
-    if app_info['largeText'].lower() in title.lower() and app_info['splitBy'] != " - ":
+def get_status(app_info):
+    if app_info['largeText'].lower() in app_info['title'].lower() and app_info['splitBy'] != " - ":
         return "{}: IDLE".format(app_info['smallText'])
     else:
-        title_seperated = title.split(app_info['splitBy'])
+        title_seperated = app_info['title'].split(app_info['splitBy'])
         if app_info['splitBy'] == " - ":
             title_basename = ntpath.basename(
                 title_seperated[app_info['splitIndex']])
