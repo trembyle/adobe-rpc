@@ -45,6 +45,15 @@
 		"smallText": "Reading"
 	},
 	{
+		"processName": "acrord32.exe",
+		"splitBy": " - ",
+		"splitIndex": 0,
+		"largeImageKey": "acrobat_large",
+		"smallImageKey": "acrobat_small",
+		"largeText": "Adobe Acrobat",
+		"smallText": "Reading"
+	},
+	{
 		"processName": "indesign.exe",
 		"splitBy": " @ ",
 		"splitIndex": 0,
